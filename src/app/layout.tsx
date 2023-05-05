@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
+import "reactflow/dist/style.css";
+
 export const metadata = {
   title: "OpenChatflow",
   description: "An application to design and monitor Telegram chatbots",
