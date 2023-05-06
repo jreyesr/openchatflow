@@ -1,0 +1,32 @@
+/* .react-flow .react-flow__node {
+  width: 150px;
+  border-radius: 5px;
+  padding: 10px;
+  color: #555;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 12px;
+} */
+
+/*
+.react-flow .react-flow__node-customnode {
+  background: #e6e6e9;
+  border: 1px solid #ddd;
+}
+
+.react-flow__node-custominput .react-flow__handle {
+  background: #e6e6e9;
+}
+
+.react-flow .react-flow__node-custominput {
+  background: #fff;
+}*/
+
+.react-flow .react-flow__handle-connecting {
+  @apply bg-red-500;
+}
+
+/* This should go BELOW the connecting class, so that it overrides it when required */
+.react-flow .react-flow__handle-valid {
+  @apply bg-green-500;
+}

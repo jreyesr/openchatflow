@@ -1,10 +1,10 @@
-import Topbar from "@/components/sidebar";
+import Topbar from "@/components/topbar";
 import "./globals.css";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
-import "reactflow/dist/style.css";
+// import "reactflow/dist/style.css";
 
 export const metadata = {
   title: "OpenChatflow",
