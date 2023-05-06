@@ -1,3 +1,4 @@
+import SimpleMessage from "@/components/nodes/SimpleMessageNode";
 import StartNode from "@/components/nodes/StartNode";
 import React, { useCallback, useMemo } from "react";
 import ReactFlow, {
@@ -16,18 +17,8 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 
 const initialNodes: Node[] = [
-  {
-    id: "0",
-    type: "start",
-    position: { x: 65, y: 0 },
-    data: {},
-    deletable: false,
-  },
-  {
-    id: "1",
-    position: { x: 0, y: 80 },
-    data: { label: "1" },
-  },
+  StartNode.Builder(),
+  SimpleMessage.Builder({ x: 0, y: 80 }, "1"),
   {
     id: "2",
     position: { x: 0, y: 180 },
@@ -36,7 +27,7 @@ const initialNodes: Node[] = [
 ];
 const initialEdges: Edge[] = [
   { id: "e1-2", source: "1", target: "2" },
-  { id: "start", source: "0", target: "1" },
+  { id: "start", source: "__start__", target: "1" },
 ];
 
 export default function Editor() {
@@ -48,7 +39,10 @@ export default function Editor() {
     [setEdges]
   );
 
-  const nodeTypes = useMemo(() => ({ start: StartNode }), []);
+  const nodeTypes = useMemo(
+    () => ({ start: StartNode, stateSimpleMsg: SimpleMessage }),
+    []
+  );
 
   return (
     <div style={{ flexGrow: 1, fontSize: 12 }}>
@@ -60,12 +54,20 @@ export default function Editor() {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         fitView
+        maxZoom={1.5}
+        deleteKeyCode={["Backspace", "Delete"]}
+        nodeOrigin={[0.5, 0.5]} // Make the center of the nodes their anchor point (for position corrds)
         className="bg-white"
       >
         <Controls />
         <MiniMap />
         <Background variant={BackgroundVariant.Cross} gap={25} size={4} />
       </ReactFlow>
+      {nodes.map((n) => (
+        <code key={n.id} className="block">
+          {JSON.stringify(n)}
+        </code>
+      ))}
     </div>
   );
 }

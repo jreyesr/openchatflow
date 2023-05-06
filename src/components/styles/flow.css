@@ -30,3 +30,7 @@
 .react-flow .react-flow__handle-valid {
   @apply bg-green-500;
 }
+
+.react-flow .selected .react-flow__custom {
+  @apply shadow-xl;
+}

@@ -4,12 +4,14 @@ import {
   Position,
   useReactFlow,
   getOutgoers,
+  Node,
   NodeProps,
+  XYPosition,
 } from "reactflow";
 
 import "../styles/flow.css";
 
-export default function StartNode(props: NodeProps) {
+function StartNode(props: NodeProps) {
   const flow = useReactFlow();
 
   const isValidConnection = (connection: Connection) => {
@@ -54,3 +56,14 @@ export default function StartNode(props: NodeProps) {
     </div>
   );
 }
+StartNode.TypeKey = "start";
+StartNode.Builder = function (position: XYPosition = { x: 0, y: 0 }): Node {
+  return {
+    id: "__start__",
+    position: position,
+    data: {},
+    deletable: false,
+    type: StartNode.TypeKey,
+  };
+};
+export default StartNode;
