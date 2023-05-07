@@ -1,3 +1,4 @@
+import EndNode from "@/components/nodes/EndNode";
 import SimpleMessage from "@/components/nodes/SimpleMessageNode";
 import StartNode from "@/components/nodes/StartNode";
 import React, { useCallback, useMemo } from "react";
@@ -19,15 +20,13 @@ import "reactflow/dist/style.css";
 const initialNodes: Node[] = [
   StartNode.Builder(),
   SimpleMessage.Builder({ x: 0, y: 80 }, "1"),
-  {
-    id: "2",
-    position: { x: 0, y: 180 },
-    data: { label: "2" },
-  },
+  SimpleMessage.Builder({ x: 120, y: 80 }, "2"),
+  EndNode.Builder({ x: 60, y: 160 }, "end"),
 ];
 const initialEdges: Edge[] = [
   { id: "e1-2", source: "1", target: "2" },
   { id: "start", source: "__start__", target: "1" },
+  { id: "final", source: "2", target: "end" },
 ];
 
 export default function Editor() {
@@ -40,7 +39,11 @@ export default function Editor() {
   );
 
   const nodeTypes = useMemo(
-    () => ({ start: StartNode, stateSimpleMsg: SimpleMessage }),
+    () => ({
+      [StartNode.TypeKey]: StartNode,
+      [SimpleMessage.TypeKey]: SimpleMessage,
+      [EndNode.TypeKey]: EndNode,
+    }),
     []
   );
 

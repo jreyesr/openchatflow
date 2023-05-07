@@ -13,7 +13,9 @@ import { useEffect, useState } from "react";
 import ConfigDialog from "./ConfigDialog";
 import { isValidConnection } from "./utils";
 
-function SimpleMessage(props: NodeProps) {
+type CustomData = { label: string; msg: string };
+
+function SimpleMessage(props: NodeProps<CustomData>) {
   const flow = useReactFlow();
 
   const [showConfig, setShowConfig] = useState(false);
@@ -104,7 +106,10 @@ function SimpleMessage(props: NodeProps) {
   );
 }
 SimpleMessage.TypeKey = "stateSimpleMsg";
-SimpleMessage.Builder = function (position: XYPosition, id?: string): Node {
+SimpleMessage.Builder = function (
+  position: XYPosition,
+  id?: string
+): Node<CustomData> {
   return {
     id: id ?? uuidv4(), // If no ID provided, generate one at random
     position: position,

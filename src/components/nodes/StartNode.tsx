@@ -11,7 +11,9 @@ import {
 import "../styles/flow.css";
 import { isValidConnection } from "./utils";
 
-function StartNode(props: NodeProps) {
+type CustomData = {};
+
+function StartNode(props: NodeProps<CustomData>) {
   const flow = useReactFlow();
 
   const _isValidConnection = (connection: Connection): boolean => {
@@ -58,7 +60,9 @@ function StartNode(props: NodeProps) {
   );
 }
 StartNode.TypeKey = "start";
-StartNode.Builder = function (position: XYPosition = { x: 0, y: 0 }): Node {
+StartNode.Builder = function (
+  position: XYPosition = { x: 0, y: 0 }
+): Node<CustomData> {
   return {
     id: "__start__",
     position: position,
