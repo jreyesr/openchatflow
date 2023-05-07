@@ -3,22 +3,23 @@ import {
   Handle,
   Position,
   useReactFlow,
-  getOutgoers,
   Node,
   NodeProps,
   XYPosition,
 } from "reactflow";
 
 import "../styles/flow.css";
+import { isValidConnection } from "./utils";
 
 function StartNode(props: NodeProps) {
   const flow = useReactFlow();
 
-  const isValidConnection = (connection: Connection) => {
-    const comingFrom = flow.getNode(connection.source as string)!;
-    const outgoing = getOutgoers(comingFrom, flow.getNodes(), flow.getEdges());
-    // Only allow connection if there are no connections already present
-    return outgoing.length == 0;
+  const _isValidConnection = (connection: Connection): boolean => {
+    // In addition to the standard validation, the Start node can only connect to a proper state node (no async actions!)
+    return (
+      isValidConnection(flow, connection) &&
+      (flow.getNode(connection.target!)!.type ?? "").startsWith("state")
+    );
   };
 
   return (
@@ -50,7 +51,7 @@ function StartNode(props: NodeProps) {
       <Handle
         type="source"
         position={Position.Bottom}
-        isValidConnection={isValidConnection}
+        isValidConnection={_isValidConnection}
         className="!bg-blue-500"
       />
     </div>

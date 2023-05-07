@@ -31,6 +31,10 @@
   @apply bg-green-500;
 }
 
+.react-flow .react-flow__custom {
+  @apply max-w-xs;
+}
+
 .react-flow .selected .react-flow__custom {
   @apply shadow-xl;
 }

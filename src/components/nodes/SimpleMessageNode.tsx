@@ -1,32 +1,20 @@
 import {
-  Connection,
   Handle,
   Position,
   useReactFlow,
-  getOutgoers,
   Node,
   NodeProps,
-  NodeToolbar,
   XYPosition,
 } from "reactflow";
 import { v4 as uuidv4 } from "uuid";
 
 import "../styles/flow.css";
 import { useEffect, useState } from "react";
+import ConfigDialog from "./ConfigDialog";
+import { isValidConnection } from "./utils";
 
 function SimpleMessage(props: NodeProps) {
   const flow = useReactFlow();
-
-  const isValidConnection = (connection: Connection) => {
-    const comingFrom = flow.getNode(connection.source as string)!;
-    const outgoing = getOutgoers(
-      comingFrom,
-      flow.getNodes(),
-      flow.getEdges()
-    ).filter((n) => n.type?.startsWith("state"));
-    // Only allow connection if there are no connections already present to a state node
-    return outgoing.length == 0;
-  };
 
   const [showConfig, setShowConfig] = useState(false);
   const onShowConfigClicked = () => {
@@ -45,17 +33,40 @@ function SimpleMessage(props: NodeProps) {
   // Hide the config dialog when the node is deselected
   useEffect(() => {
     if (!props.selected) setShowConfig(false);
-  }, [props.selected, setShowConfig]);
+  }, [props.selected]);
+
+  const setMessage = (msg: string) => {
+    flow.setNodes((nds) =>
+      nds.map((n) => {
+        // Change the data on the current node
+        if (n.id === props.id) {
+          // NOTE You have to set the entire data object, otherwise it doesn't refresh
+          // See https://reactflow.dev/docs/examples/nodes/update-node/
+          n.data = {
+            ...n.data,
+            msg,
+          };
+        }
+        return n;
+      })
+    );
+  };
 
   return (
     <>
-      <NodeToolbar
-        position={Position.Right}
-        isVisible={showConfig}
-        className="border-2 border-orange-500 rounded-md p-2 text-lg"
-      >
-        ASD
-      </NodeToolbar>
+      <ConfigDialog display={showConfig}>
+        <label className="block">
+          <span className="text-gray-700">Text</span>
+          <input
+            type="text"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 focus:ring-opacity-50"
+            placeholder="Enter a message..."
+            value={props.data.msg}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        </label>
+      </ConfigDialog>
+
       <div className="react-flow__custom drop-shadow-md px-2 py-1 rounded-md bg-orange-100 border-2 border-gray-600 relative group">
         {/* START config button */}
         <div
@@ -74,20 +85,19 @@ function SimpleMessage(props: NodeProps) {
         </div>
         {/* END config button */}
 
+        {/* Node body */}
         <div className="font-bold">{props.data.label}</div>
-        <div className="text-gray-500">{props.data.msg}</div>
+        <div className="text-gray-500 text-ellipsis overflow-hidden">
+          &ldquo;{props.data.msg}&rdquo;
+        </div>
 
-        <Handle
-          type="target"
-          position={Position.Top}
-          // isValidConnection={isValidConnection}
-          // className="!bg-yellow-500"
-        />
+        {/* Node handles */}
+        <Handle type="target" position={Position.Top} />
         <Handle
           type="source"
           position={Position.Bottom}
-          isValidConnection={isValidConnection}
-          className="w-8 !bg-blue-500"
+          isValidConnection={(conn) => isValidConnection(flow, conn)}
+          className="!bg-blue-500"
         />
       </div>
     </>
