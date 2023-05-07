@@ -24,8 +24,8 @@ const initialNodes: Node[] = [
   EndNode.Builder({ x: 60, y: 160 }, "end"),
 ];
 const initialEdges: Edge[] = [
-  { id: "e1-2", source: "1", target: "2" },
   { id: "start", source: "__start__", target: "1" },
+  { id: "e1-2", source: "1", target: "2" },
   { id: "final", source: "2", target: "end" },
 ];
 
@@ -58,13 +58,15 @@ export default function Editor() {
         nodeTypes={nodeTypes}
         fitView
         maxZoom={1.5}
+        snapToGrid={true}
+        snapGrid={[20, 20]}
         deleteKeyCode={["Backspace", "Delete"]}
-        nodeOrigin={[0.5, 0.5]} // Make the center of the nodes their anchor point (for position corrds)
+        nodeOrigin={[0.5, 0.5]} // Make the center of the nodes their anchor point (for position coords)
         className="bg-white"
       >
         <Controls />
         <MiniMap />
-        <Background variant={BackgroundVariant.Cross} gap={25} size={4} />
+        <Background variant={BackgroundVariant.Cross} gap={20} size={4} />
       </ReactFlow>
       {nodes.map((n) => (
         <code key={n.id} className="block">
