@@ -1,4 +1,6 @@
+import AddNodeFloatingButton from "@/components/nodes/AddNodeFloatingButton";
 import EndNode from "@/components/nodes/EndNode";
+import NodeChooserPopup from "@/components/nodes/NodeChooserPopup";
 import SimpleMessage from "@/components/nodes/SimpleMessageNode";
 import StartNode from "@/components/nodes/StartNode";
 import React, { useCallback, useMemo } from "react";
@@ -65,7 +67,8 @@ export default function Editor() {
         className="bg-white"
       >
         <Controls />
-        <MiniMap />
+        <MiniMap zoomable pannable />
+        <AddNodeFloatingButton onAdd={console.log} />
         <Background variant={BackgroundVariant.Cross} gap={20} size={4} />
       </ReactFlow>
       {nodes.map((n) => (
