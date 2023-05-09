@@ -1,9 +1,11 @@
+"use client";
+
 import AddNodeFloatingButton from "@/components/nodes/AddNodeFloatingButton";
 import EndNode from "@/components/nodes/EndNode";
-import NodeChooserPopup from "@/components/nodes/NodeChooserPopup";
+import NodeChooserPopup from "@/components/NodeChooserPopup";
 import SimpleMessage from "@/components/nodes/SimpleMessageNode";
 import StartNode from "@/components/nodes/StartNode";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ReactFlow, {
   Node,
   Background,
@@ -31,6 +33,12 @@ const initialEdges: Edge[] = [
   { id: "final", source: "2", target: "end" },
 ];
 
+const nodeTypes = {
+  [StartNode.TypeKey]: StartNode,
+  [SimpleMessage.TypeKey]: SimpleMessage,
+  [EndNode.TypeKey]: EndNode,
+};
+
 export default function Editor() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -40,14 +48,8 @@ export default function Editor() {
     [setEdges]
   );
 
-  const nodeTypes = useMemo(
-    () => ({
-      [StartNode.TypeKey]: StartNode,
-      [SimpleMessage.TypeKey]: SimpleMessage,
-      [EndNode.TypeKey]: EndNode,
-    }),
-    []
-  );
+  const [family, setFamily] = useState<"state" | "action">("state");
+  const [showPicker, setShowPicker] = useState(false);
 
   return (
     <div style={{ flexGrow: 1, fontSize: 12 }}>
@@ -68,7 +70,19 @@ export default function Editor() {
       >
         <Controls />
         <MiniMap zoomable pannable />
-        <AddNodeFloatingButton onAdd={console.log} />
+        <AddNodeFloatingButton
+          onAdd={(family) => {
+            setFamily(family);
+            setShowPicker(true);
+          }}
+        />
+        {showPicker && (
+          <NodeChooserPopup
+            type={family}
+            onHide={() => setShowPicker(false)}
+            nodeTypes={nodeTypes}
+          />
+        )}
         <Background variant={BackgroundVariant.Cross} gap={20} size={4} />
       </ReactFlow>
       {nodes.map((n) => (

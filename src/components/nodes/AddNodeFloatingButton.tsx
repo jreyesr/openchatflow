@@ -29,7 +29,7 @@ export default function AddNodeFloatingButton(props: Props) {
       </button>
 
       <button
-        className="bottom-0 right-0 p-0 w-12 h-12 hidden group-hover:block rounded-full bg-gray-200 hover:bg-gray-300 active:shadow-lg shadow transition ease-in duration-200"
+        className="p-0 w-12 h-12 hidden group-hover:block rounded-full bg-gray-200 hover:bg-gray-300 active:shadow-lg shadow transition ease-in duration-200"
         onClick={() => props.onAdd("state")}
       >
         {/* Material Design's Chat Bubble icon */}
@@ -43,7 +43,7 @@ export default function AddNodeFloatingButton(props: Props) {
       </button>
 
       <button
-        className="bottom-0 right-0 p-0 w-12 h-12 hidden group-hover:block rounded-full bg-gray-200 hover:bg-gray-300 active:shadow-lg shadow transition ease-in duration-200"
+        className="p-0 w-12 h-12 hidden group-hover:block rounded-full bg-gray-200 hover:bg-gray-300 active:shadow-lg shadow transition ease-in duration-200"
         onClick={() => props.onAdd("action")}
       >
         {/* Material Design's Bolt icon */}

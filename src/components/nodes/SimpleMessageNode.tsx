@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import ConfigDialog from "./ConfigDialog";
 import { isValidConnection } from "./utils";
 
+import chat from "@/icons/chat.svg";
+
 type CustomData = { label: string; msg: string };
 
 function SimpleMessage(props: NodeProps<CustomData>) {
@@ -117,5 +119,7 @@ SimpleMessage.Builder = function (
     type: SimpleMessage.TypeKey,
   };
 };
+SimpleMessage.FriendlyName = "Text message";
+SimpleMessage.Icon = chat;
 
 export default SimpleMessage;
