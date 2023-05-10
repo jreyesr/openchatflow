@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import "../styles/flow.css";
 import ConfigDialog from "./ConfigDialog";
-import stop from "@/icons/stop.svg";
+import Stop from "@/icons/stop.svg";
 
 type ExitCode = "success" | "failure";
 type CustomData = { exitCode: ExitCode };
@@ -156,5 +156,6 @@ EndNode.Builder = function (
   };
 };
 EndNode.FriendlyName = "End";
-EndNode.Icon = stop;
+EndNode.Icon = Stop;
+
 export default EndNode;
