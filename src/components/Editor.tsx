@@ -5,7 +5,7 @@ import EndNode from "@/components/nodes/EndNode";
 import NodeChooserPopup from "@/components/NodeChooserPopup";
 import SimpleMessage from "@/components/nodes/SimpleMessageNode";
 import StartNode from "@/components/nodes/StartNode";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import ReactFlow, {
   Node,
   Background,
@@ -17,9 +17,12 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
   BackgroundVariant,
+  ReactFlowInstance,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
+
+import { CustomNode } from "@/types";
 
 const initialNodes: Node[] = [
   StartNode.Builder(),
@@ -33,26 +36,62 @@ const initialEdges: Edge[] = [
   { id: "final", source: "2", target: "end" },
 ];
 
-const nodeTypes = {
+const nodeTypes: { [k in string]: CustomNode<any> } = {
   [StartNode.TypeKey]: StartNode,
   [SimpleMessage.TypeKey]: SimpleMessage,
   [EndNode.TypeKey]: EndNode,
 };
 
 export default function Editor() {
+  const flowWrapper = useRef<HTMLDivElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [flow, setFlow] = useState<ReactFlowInstance | null>(null);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
 
+  const onDragOver: React.DragEventHandler = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  const onDrop: React.DragEventHandler = useCallback(
+    (event) => {
+      event.preventDefault();
+      const type = event.dataTransfer!.getData("application/reactflow");
+
+      // check if the dropped element is valid
+      if (typeof type === "undefined" || !type) {
+        return;
+      }
+
+      // Get the drop position in editor's coordinates
+      const reactFlowBounds = flowWrapper.current!.getBoundingClientRect();
+      const position = flow!.project({
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top,
+      });
+      // Build a new node
+      const newNode = nodeTypes[type].Builder(position);
+
+      setNodes((nds) => nds.concat(newNode)); // Actually add the new node to the nodelist
+      setShowPicker(false); // Hide the palette dialog!
+    },
+    [flow, setNodes]
+  );
+
   const [family, setFamily] = useState<"state" | "action">("state");
   const [showPicker, setShowPicker] = useState(false);
 
   return (
-    <div style={{ flexGrow: 1, fontSize: 12 }}>
+    <div
+      style={{ flexGrow: 1, fontSize: 12 }}
+      className="reactflow-wrapper"
+      ref={flowWrapper}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -67,6 +106,9 @@ export default function Editor() {
         deleteKeyCode={["Backspace", "Delete"]}
         nodeOrigin={[0.5, 0.5]} // Make the center of the nodes their anchor point (for position coords)
         className="bg-white"
+        onInit={setFlow}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
       >
         <Controls />
         <MiniMap zoomable pannable />

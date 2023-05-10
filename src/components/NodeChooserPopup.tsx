@@ -2,6 +2,7 @@ import { NodeProps, Panel } from "reactflow";
 import NodeList from "./NodeList";
 
 import Close from "@/icons/close.svg";
+import { CustomNode } from "@/types";
 
 const titles: { [k in ChooserFamily]: string } = {
   state: "Choose a state node",
@@ -12,7 +13,7 @@ type ChooserFamily = "state" | "action";
 type Props = {
   type: ChooserFamily;
   onHide: () => void;
-  nodeTypes: { [k in string]: (props: NodeProps) => JSX.Element };
+  nodeTypes: { [k in string]: CustomNode<any> };
 };
 
 export default function NodeChooserPopup(props: Props) {
@@ -32,11 +33,14 @@ export default function NodeChooserPopup(props: Props) {
         className="absolute inset-0 bg-gray-300 bg-opacity-50"
         onClick={props.onHide}
       />
+
       <div className="absolute flex flex-col gap-6 mx-auto w-1/3 left-0 right-0 top-10 bg-white h-5/6 rounded-lg p-6 border border-gray-400">
         <div className="font-bold text-base flex-grow-0">
           {titles[props.type]}
         </div>
         <NodeList nodes={candidateNodes} />
+
+        {/* Close button */}
         <button
           className="absolute top-6 right-6"
           onClick={() => props.onHide()}

@@ -11,6 +11,8 @@ import {
 import "../styles/flow.css";
 import { isValidConnection } from "./utils";
 
+import Run from "@/icons/run.svg";
+
 type CustomData = {};
 
 function StartNode(props: NodeProps<CustomData>) {
@@ -71,4 +73,7 @@ StartNode.Builder = function (
     type: StartNode.TypeKey,
   };
 };
+StartNode.FriendlyName = "Start";
+StartNode.Icon = Run;
+
 export default StartNode;
