@@ -26,6 +26,8 @@ import SimpleMessage from "@/components/nodes/SimpleMessageNode";
 import StartNode from "@/components/nodes/StartNode";
 import Webhook from "@/components/nodes/Webhook";
 import { isValidConnection } from "./nodes/utils";
+import AutoEdge from "./nodes/AutoEdge";
+
 const initialNodes: Node[] = [
   StartNode.Builder({ x: 0, y: 0 }),
   SimpleMessage.Builder({ x: 0, y: 80 }, "1"),
@@ -55,6 +57,8 @@ const nodeTypes: { [k in string]: CustomNode<any> } = {
   [Webhook.TypeKey]: Webhook,
 };
 
+const edgeTypes: { [k in string]: any } = {
+  default: AutoEdge,
 };
 
 export default function Editor() {
@@ -114,6 +118,7 @@ export default function Editor() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         isValidConnection={(conn) => isValidConnection(flow!, conn)}
         fitView
         maxZoom={1.5}
