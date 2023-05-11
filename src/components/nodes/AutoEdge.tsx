@@ -12,7 +12,6 @@ import {
  * whether it's connecting two main states or a state and an async action
  */
 export default function AutoEdge({
-  id,
   source,
   sourceX,
   sourceY,
