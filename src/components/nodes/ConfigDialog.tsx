@@ -9,9 +9,9 @@ export default function ConfigDialog(props: {
     <NodeToolbar
       position={Position.Right}
       isVisible={props.display}
-      className="flex flex-col border-2 bg-white border-orange-500 rounded-md p-4 text-lg w-80"
+      className="flex flex-col gap-3 border-2 bg-white border-orange-500 rounded-md p-4 text-base w-80"
     >
-      <div className="font-bold flex content-center mb-2">
+      <div className="font-bold flex content-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           height="20"

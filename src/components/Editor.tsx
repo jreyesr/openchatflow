@@ -1,10 +1,5 @@
 "use client";
 
-import AddNodeFloatingButton from "@/components/nodes/AddNodeFloatingButton";
-import EndNode from "@/components/nodes/EndNode";
-import NodeChooserPopup from "@/components/NodeChooserPopup";
-import SimpleMessage from "@/components/nodes/SimpleMessageNode";
-import StartNode from "@/components/nodes/StartNode";
 import React, { useCallback, useRef, useState } from "react";
 import ReactFlow, {
   Node,
@@ -24,22 +19,42 @@ import "reactflow/dist/style.css";
 
 import { CustomNode } from "@/types";
 
+import AddNodeFloatingButton from "@/components/nodes/AddNodeFloatingButton";
+import EndNode from "@/components/nodes/EndNode";
+import NodeChooserPopup from "@/components/NodeChooserPopup";
+import SimpleMessage from "@/components/nodes/SimpleMessageNode";
+import StartNode from "@/components/nodes/StartNode";
+import Webhook from "@/components/nodes/Webhook";
+import { isValidConnection } from "./nodes/utils";
 const initialNodes: Node[] = [
-  StartNode.Builder(),
+  StartNode.Builder({ x: 0, y: 0 }),
   SimpleMessage.Builder({ x: 0, y: 80 }, "1"),
-  SimpleMessage.Builder({ x: 120, y: 80 }, "2"),
-  EndNode.Builder({ x: 60, y: 160 }, "end"),
+  SimpleMessage.Builder({ x: 0, y: 160 }, "2"),
+  EndNode.Builder({ x: 0, y: 240 }, "end"),
+
+  Webhook.Builder({ x: 140, y: 200 }, "wh"),
 ];
 const initialEdges: Edge[] = [
   { id: "start", source: "__start__", target: "1" },
   { id: "e1-2", source: "1", target: "2" },
   { id: "final", source: "2", target: "end" },
+
+  { id: "wh1", source: "1", target: "wh" },
+  { id: "wh2", source: "2", target: "wh" },
 ];
 
 const nodeTypes: { [k in string]: CustomNode<any> } = {
+  // Control nodes
   [StartNode.TypeKey]: StartNode,
-  [SimpleMessage.TypeKey]: SimpleMessage,
   [EndNode.TypeKey]: EndNode,
+
+  // State nodes
+  [SimpleMessage.TypeKey]: SimpleMessage,
+
+  // Async actions
+  [Webhook.TypeKey]: Webhook,
+};
+
 };
 
 export default function Editor() {
@@ -99,6 +114,7 @@ export default function Editor() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        isValidConnection={(conn) => isValidConnection(flow!, conn)}
         fitView
         maxZoom={1.5}
         snapToGrid={true}

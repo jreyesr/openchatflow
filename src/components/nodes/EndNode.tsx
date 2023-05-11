@@ -12,11 +12,14 @@ import { v4 as uuidv4 } from "uuid";
 import "../styles/flow.css";
 import ConfigDialog from "./ConfigDialog";
 import Stop from "@/icons/stop.svg";
+import { CustomNode } from "@/types";
 
 type ExitCode = "success" | "failure";
 type CustomData = { exitCode: ExitCode };
 
-function EndNode(props: NodeProps<CustomData>) {
+const EndNode: CustomNode<CustomData> = function (
+  props: NodeProps<CustomData>
+) {
   const flow = useReactFlow();
 
   const _isValidConnection = (connection: Connection): boolean => {
@@ -142,7 +145,8 @@ function EndNode(props: NodeProps<CustomData>) {
       </div>
     </>
   );
-}
+} as CustomNode<CustomData>;
+
 EndNode.TypeKey = "stateEnd";
 EndNode.Builder = function (
   position: XYPosition,

@@ -12,10 +12,13 @@ import "../styles/flow.css";
 import { isValidConnection } from "./utils";
 
 import Run from "@/icons/run.svg";
+import { CustomNode } from "@/types";
 
 type CustomData = {};
 
-function StartNode(props: NodeProps<CustomData>) {
+const StartNode: CustomNode<CustomData> = function StartNode(
+  props: NodeProps<CustomData>
+) {
   const flow = useReactFlow();
 
   const _isValidConnection = (connection: Connection): boolean => {
@@ -60,8 +63,9 @@ function StartNode(props: NodeProps<CustomData>) {
       />
     </div>
   );
-}
-StartNode.TypeKey = "start";
+} as CustomNode<CustomData>;
+
+StartNode.TypeKey = "stateStart";
 StartNode.Builder = function (
   position: XYPosition = { x: 0, y: 0 }
 ): Node<CustomData> {

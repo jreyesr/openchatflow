@@ -32,14 +32,10 @@ type Props = {
 };
 
 export default function NodeList(props: Props) {
-  const dummyNodes: [string, CustomNode<any>][] = [].concat(
-    ...Array(10).fill(Object.entries(props.nodes))
-  );
-  console.log(props.nodes);
   return (
     <div className="grid grid-cols-3 gap-2 overflow-auto">
-      {/* {Object.entries(props.nodes).map(([k, v]) => ( */}
-      {dummyNodes.map(([k, v]) => (
+      {Object.entries(props.nodes).map(([k, v]) => (
+        // {dummyNodes.map(([k, v]) => (
         <SingleNode key={k} nodeType={k} name={v.FriendlyName} icon={v.Icon} />
       ))}
     </div>
