@@ -1,14 +1,16 @@
-import { useReactFlow } from "reactflow";
+import { useReactFlow, Node, NodeProps } from "reactflow";
 
-export default function useCustomDataItem(props: { id: string; key: string }) {
+export default function useCustomDataItem<Type, Key extends keyof Type>(props: {
+  nodeProps: NodeProps<Type>;
+  key: Key;
+}): [any, (newData: any) => void] {
   const flow = useReactFlow();
-  const node = flow.getNode(props.id)!;
 
-  const setData = (newData: string) => {
+  const setData = (newData: any) => {
     flow.setNodes((nds) =>
       nds.map((n) => {
         // Change the data on the current node
-        if (n.id === props.id) {
+        if (n.id === props.nodeProps.id) {
           // NOTE You have to set the entire data object, otherwise it doesn't refresh
           // See https://reactflow.dev/docs/examples/nodes/update-node/
           n.data = {
@@ -21,5 +23,5 @@ export default function useCustomDataItem(props: { id: string; key: string }) {
     );
   };
 
-  return [node.data[props.key], setData];
+  return [props.nodeProps.data[props.key], setData];
 }

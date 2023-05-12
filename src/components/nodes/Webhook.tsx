@@ -9,23 +9,29 @@ import useCustomDataItem from "@/hooks/useCustomDataItem";
 
 import TextField from "@/components/forms/TextField";
 import Dropdown from "@/components/forms/Dropdown";
+import MultiKeyValueField from "@/components/forms/MultiKeyValueField";
 
 type CustomData = {
   url: string;
   method: "GET" | "POST";
-  headers: { [k: string]: string };
-  body: any;
+  headers: { k: string; v: string }[];
+  body: { k: string; v: string }[];
 };
 
 const Webhook: CustomNode<CustomData> = function (
   props: NodeProps<CustomData>
 ) {
   const { showConfig, configProps, ConfigButton } = useConfigDialog(props);
-  const [url, setUrl] = useCustomDataItem({ id: props.id, key: "url" });
+  const [url, setUrl] = useCustomDataItem({ nodeProps: props, key: "url" });
   const [method, setMethod] = useCustomDataItem({
-    id: props.id,
+    nodeProps: props,
     key: "method",
   });
+  const [headers, setHeaders] = useCustomDataItem({
+    nodeProps: props,
+    key: "headers",
+  });
+  const [body, setBody] = useCustomDataItem({ nodeProps: props, key: "body" });
 
   return (
     <>
@@ -41,6 +47,20 @@ const Webhook: CustomNode<CustomData> = function (
           options={["GET", "POST"]}
           selected={method}
           onChange={setMethod}
+        />
+        <MultiKeyValueField
+          label="Headers"
+          placeholderKey="Header"
+          placeholderVal="Value"
+          values={headers}
+          onChange={setHeaders}
+        />
+        <MultiKeyValueField
+          label="Body"
+          placeholderKey="Key"
+          placeholderVal="Value"
+          values={body}
+          onChange={setBody}
         />
       </ConfigDialog>
 
@@ -69,8 +89,8 @@ Webhook.Builder = (position: XYPosition, id?: string) => ({
   data: {
     url: "",
     method: "POST",
-    headers: {},
-    body: {},
+    headers: [],
+    body: [],
   },
   type: Webhook.TypeKey,
 });

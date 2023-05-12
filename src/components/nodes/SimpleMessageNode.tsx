@@ -27,7 +27,7 @@ const SimpleMessage: CustomNode<CustomData> = function (
   const flow = useReactFlow();
 
   const { showConfig, configProps, ConfigButton } = useConfigDialog(props);
-  const [msg, setMsg] = useCustomDataItem({ id: props.id, key: "msg" });
+  const [msg, setMsg] = useCustomDataItem({ nodeProps: props, key: "msg" });
 
   return (
     <>
