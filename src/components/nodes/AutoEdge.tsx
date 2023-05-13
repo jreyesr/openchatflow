@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  EdgeProps,
-  getBezierPath,
-  useReactFlow,
-} from "reactflow";
+import { BaseEdge, EdgeProps, getBezierPath, useReactFlow } from "reactflow";
 
 /**
  * A custom Reactflow edge that changes its appearance depending on
@@ -21,9 +15,10 @@ export default function AutoEdge({
   sourcePosition,
   targetPosition,
   style = {},
+  markerStart,
   markerEnd,
 }: EdgeProps) {
-  const [edgePath, labelX, labelY] = getBezierPath({
+  const [edgePath] = getBezierPath({
     sourceX,
     sourceY,
     sourcePosition,
@@ -49,8 +44,11 @@ export default function AutoEdge({
   // any other combination shouldn't be possible
 
   return (
-    <>
-      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
-    </>
+    <BaseEdge
+      path={edgePath}
+      markerStart={markerStart}
+      markerEnd={markerEnd}
+      style={style}
+    />
   );
 }

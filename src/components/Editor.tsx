@@ -13,6 +13,7 @@ import ReactFlow, {
   useNodesState,
   BackgroundVariant,
   ReactFlowInstance,
+  MarkerType,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -130,6 +131,9 @@ export default function Editor() {
         onInit={setFlow}
         onDrop={onDrop}
         onDragOver={onDragOver}
+        defaultEdgeOptions={{
+          markerEnd: { type: MarkerType.Arrow, width: 15, height: 15 },
+        }}
       >
         <Controls />
         <MiniMap zoomable pannable />
