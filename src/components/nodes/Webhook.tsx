@@ -68,9 +68,9 @@ const Webhook: CustomNode<CustomData> = function (
         <ConfigButton {...configProps} />
 
         {/* Node body */}
-        <div className="font-bold">{props.data.method} request</div>
+        <div className="font-bold">{method} request</div>
         <div className="text-gray-500 text-ellipsis whitespace-nowrap overflow-hidden">
-          ↝ {props.data.url}
+          ↝ {url}
         </div>
 
         {/* Node handles */}

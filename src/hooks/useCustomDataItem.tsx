@@ -3,10 +3,10 @@ import { useReactFlow, Node, NodeProps } from "reactflow";
 export default function useCustomDataItem<Type, Key extends keyof Type>(props: {
   nodeProps: NodeProps<Type>;
   key: Key;
-}): [any, (newData: any) => void] {
+}): [Type[Key], (newData: Type[Key]) => void] {
   const flow = useReactFlow();
 
-  const setData = (newData: any) => {
+  const setData = (newData: Type[Key]) => {
     flow.setNodes((nds) =>
       nds.map((n) => {
         // Change the data on the current node

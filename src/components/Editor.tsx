@@ -26,21 +26,24 @@ import NodeChooserPopup from "@/components/NodeChooserPopup";
 import SimpleMessage from "@/components/nodes/SimpleMessageNode";
 import StartNode from "@/components/nodes/StartNode";
 import Webhook from "@/components/nodes/Webhook";
+import Command from "@/components/nodes/Command";
+
 import { isValidConnection } from "./nodes/utils";
 import AutoEdge from "./nodes/AutoEdge";
 
 const initialNodes: Node[] = [
   StartNode.Builder({ x: 0, y: 0 }),
-  SimpleMessage.Builder({ x: 0, y: 80 }, "1"),
-  SimpleMessage.Builder({ x: 0, y: 160 }, "2"),
-  EndNode.Builder({ x: 0, y: 240 }, "end"),
+  SimpleMessage.Builder({ x: 0, y: 160 }, "1"),
+  SimpleMessage.Builder({ x: 140, y: 160 }, "2"),
+  Command.Builder({ x: 0, y: 80 }, "cmd"),
+  EndNode.Builder({ x: 140, y: 240 }, "end"),
 
-  Webhook.Builder({ x: 140, y: 200 }, "wh"),
+  // Webhook.Builder({ x: 140, y: 200 }, "wh"),
 ];
 const initialEdges: Edge[] = [
-  { id: "start", source: "__start__", target: "1" },
-  { id: "e1-2", source: "1", target: "2" },
-  { id: "final", source: "2", target: "end" },
+  { id: "start", source: "__start__", target: "cmd" },
+  // { id: "e1-2", source: "1", target: "2" },
+  // { id: "final", source: "2", target: "end" },
 
   { id: "wh1", source: "1", target: "wh" },
   { id: "wh2", source: "2", target: "wh" },
@@ -53,6 +56,7 @@ const nodeTypes: { [k in string]: CustomNode<any> } = {
 
   // State nodes
   [SimpleMessage.TypeKey]: SimpleMessage,
+  [Command.TypeKey]: Command,
 
   // Async actions
   [Webhook.TypeKey]: Webhook,
