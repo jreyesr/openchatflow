@@ -26,7 +26,8 @@ const SimpleMessage: CustomNode<CustomData> = function (
 ) {
   const flow = useReactFlow();
 
-  const { showConfig, configProps, ConfigButton } = useConfigDialog(props);
+  const { showConfig, configProps, wrapperProps, ConfigButton } =
+    useConfigDialog(props);
   const [msg, setMsg] = useCustomDataItem({ nodeProps: props, key: "msg" });
 
   return (
@@ -40,7 +41,10 @@ const SimpleMessage: CustomNode<CustomData> = function (
         />
       </ConfigDialog>
 
-      <div className="react-flow__custom drop-shadow-md px-2 py-1 rounded-md bg-orange-100 border-2 border-gray-600 relative group">
+      <div
+        className="react-flow__custom drop-shadow-md px-2 py-1 rounded-md bg-orange-100 border-2 border-gray-600 relative group"
+        {...wrapperProps}
+      >
         <ConfigButton {...configProps} />
 
         {/* Node body */}

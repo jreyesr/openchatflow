@@ -33,5 +33,10 @@ export default function useConfigDialog(node: NodeProps) {
   };
 
   // Helper: also return a reference to the actual ConfigButton component!
-  return { ConfigButton, configProps, ...configProps };
+  return {
+    ConfigButton,
+    configProps,
+    wrapperProps: { onDoubleClick: () => setShowConfig(true) },
+    ...configProps,
+  };
 }

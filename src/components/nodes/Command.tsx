@@ -27,7 +27,8 @@ const Command: CustomNode<CustomData> = function (
   const flow = useReactFlow();
   const updateNodeInternals = useUpdateNodeInternals();
 
-  const { showConfig, configProps, ConfigButton } = useConfigDialog(props);
+  const { showConfig, configProps, wrapperProps, ConfigButton } =
+    useConfigDialog(props);
   const [commands, setCommands] = useCustomDataItem({
     nodeProps: props,
     key: "commands",
@@ -48,7 +49,10 @@ const Command: CustomNode<CustomData> = function (
         />
       </ConfigDialog>
 
-      <div className="react-flow__custom drop-shadow-md px-2 py-1 rounded-md bg-orange-100 border-2 border-gray-600 max-w- relative group">
+      <div
+        className="react-flow__custom drop-shadow-md px-2 py-1 rounded-md bg-orange-100 border-2 border-gray-600 max-w- relative group"
+        {...wrapperProps}
+      >
         <ConfigButton {...configProps} />
         {/* Node body */}
         <div className="font-bold">Command router</div>
