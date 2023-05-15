@@ -24,6 +24,7 @@ import AddNodeFloatingButton from "@/components/nodes/AddNodeFloatingButton";
 import EndNode from "@/components/nodes/EndNode";
 import NodeChooserPopup from "@/components/NodeChooserPopup";
 import SimpleMessage from "@/components/nodes/SimpleMessageNode";
+import QuestionNode from "@/components/nodes/QuestionNode";
 import StartNode from "@/components/nodes/StartNode";
 import Webhook from "@/components/nodes/Webhook";
 import Command from "@/components/nodes/Command";
@@ -33,20 +34,26 @@ import AutoEdge from "./nodes/AutoEdge";
 
 const initialNodes: Node[] = [
   StartNode.Builder({ x: 0, y: 0 }),
-  SimpleMessage.Builder({ x: 0, y: 160 }, "1"),
-  SimpleMessage.Builder({ x: 140, y: 160 }, "2"),
-  Command.Builder({ x: 0, y: 80 }, "cmd"),
-  EndNode.Builder({ x: 140, y: 240 }, "end"),
+  Command.Builder({ x: 0, y: 80 }, "cmd", ["/start", "/bye"]),
 
-  // Webhook.Builder({ x: 140, y: 200 }, "wh"),
+  SimpleMessage.Builder({ x: -60, y: 240 }, "msg1"),
+  SimpleMessage.Builder({ x: 120, y: 160 }, "msg2"),
+  QuestionNode.Builder({ x: -60, y: 160 }, "q"),
+  EndNode.Builder({ x: 120, y: 240 }, "end1"),
+  EndNode.Builder({ x: -60, y: 320 }, "end2"),
+
+  Webhook.Builder({ x: -180, y: 260 }, "wh"),
 ];
 const initialEdges: Edge[] = [
   { id: "start", source: "__start__", target: "cmd" },
-  // { id: "e1-2", source: "1", target: "2" },
-  // { id: "final", source: "2", target: "end" },
 
-  { id: "wh1", source: "1", target: "wh" },
-  { id: "wh2", source: "2", target: "wh" },
+  { id: "bye", source: "cmd", sourceHandle: "1", target: "msg2" },
+  { id: "byeend", source: "msg2", target: "end1" },
+
+  { id: "start", source: "cmd", sourceHandle: "0", target: "q" },
+  { id: "q", source: "q", target: "msg1" },
+  { id: "startend", source: "msg1", target: "end2" },
+  { id: "wh1", source: "q", target: "wh" },
 ];
 
 const nodeTypes: { [k in string]: CustomNode<any> } = {
@@ -56,6 +63,7 @@ const nodeTypes: { [k in string]: CustomNode<any> } = {
 
   // State nodes
   [SimpleMessage.TypeKey]: SimpleMessage,
+  [QuestionNode.TypeKey]: QuestionNode,
   [Command.TypeKey]: Command,
 
   // Async actions

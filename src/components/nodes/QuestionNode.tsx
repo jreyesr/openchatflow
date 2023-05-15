@@ -12,32 +12,35 @@ import "../styles/flow.css";
 import ConfigDialog from "./ConfigDialog";
 import { isValidConnection } from "./utils";
 
-import Chat from "@/icons/chat.svg";
+import Question from "@/icons/question.svg";
 import { CustomNode } from "@/types";
 import useCustomDataItem from "@/hooks/useCustomDataItem";
 import useConfigDialog from "@/hooks/useConfigDialog";
 
 import TextField from "@/components/forms/TextField";
 
-type CustomData = { label: string; msg: string };
+type CustomData = { prompt: string };
 
-const SimpleMessage: CustomNode<CustomData> = function (
+const QuestionNode: CustomNode<CustomData> = function (
   props: NodeProps<CustomData>
 ) {
   const flow = useReactFlow();
 
   const { showConfig, configProps, wrapperProps, ConfigButton } =
     useConfigDialog(props);
-  const [msg, setMsg] = useCustomDataItem({ nodeProps: props, key: "msg" });
+  const [prompt, setPrompt] = useCustomDataItem({
+    nodeProps: props,
+    key: "prompt",
+  });
 
   return (
     <>
       <ConfigDialog display={showConfig}>
         <TextField
-          label="Text"
-          placeholder="Enter a message..."
-          value={msg}
-          onChange={setMsg}
+          label="Question"
+          placeholder="Enter a question..."
+          value={prompt}
+          onChange={setPrompt}
         />
       </ConfigDialog>
 
@@ -48,9 +51,9 @@ const SimpleMessage: CustomNode<CustomData> = function (
         <ConfigButton {...configProps} />
 
         {/* Node body */}
-        <div className="font-bold">{props.data.label}</div>
+        <div className="font-bold">Ask user</div>
         <div className="text-gray-500 text-ellipsis overflow-hidden">
-          &ldquo;{msg}&rdquo;
+          &ldquo;{prompt}&rdquo;
         </div>
 
         {/* Node handles */}
@@ -66,20 +69,19 @@ const SimpleMessage: CustomNode<CustomData> = function (
   );
 } as CustomNode<CustomData>;
 
-SimpleMessage.TypeKey = "stateSimpleMsg";
-SimpleMessage.Builder = function (
+QuestionNode.TypeKey = "statePrompt";
+QuestionNode.Builder = function (
   position: XYPosition,
-  id?: string,
-  message?: string
+  id?: string
 ): Node<CustomData> {
   return {
     id: id ?? uuidv4(), // If no ID provided, generate one at random
     position: position,
-    data: { label: "Send message", msg: message ?? "Hello!" },
-    type: SimpleMessage.TypeKey,
+    data: { prompt: "What's your name?" },
+    type: QuestionNode.TypeKey,
   };
 };
-SimpleMessage.FriendlyName = "Text message";
-SimpleMessage.Icon = Chat;
+QuestionNode.FriendlyName = "Question";
+QuestionNode.Icon = Question;
 
-export default SimpleMessage;
+export default QuestionNode;

@@ -15,7 +15,6 @@ import useConfigDialog from "@/hooks/useConfigDialog";
 import useCustomDataItem from "@/hooks/useCustomDataItem";
 import MultiTextField from "../forms/MultiTextField";
 import { useEffect } from "react";
-import { isValidConnection } from "./utils";
 
 type CustomData = {
   commands: string[];
@@ -24,7 +23,6 @@ type CustomData = {
 const Command: CustomNode<CustomData> = function (
   props: NodeProps<CustomData>
 ) {
-  const flow = useReactFlow();
   const updateNodeInternals = useUpdateNodeInternals();
 
   const { showConfig, configProps, wrapperProps, ConfigButton } =
@@ -76,11 +74,11 @@ const Command: CustomNode<CustomData> = function (
 };
 Command.TypeKey = "stateCommand";
 Command.FriendlyName = "Command";
-Command.Builder = (position: XYPosition, id?: string) => ({
+Command.Builder = (position: XYPosition, id?: string, commands?: string[]) => ({
   id: id ?? uuidv4(),
   position,
   data: {
-    commands: ["/start"],
+    commands: commands ?? ["/start"],
   },
   type: Command.TypeKey,
 });
