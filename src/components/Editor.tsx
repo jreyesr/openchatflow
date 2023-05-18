@@ -22,12 +22,14 @@ import { CustomNode } from "@/types";
 
 import AddNodeFloatingButton from "@/components/nodes/AddNodeFloatingButton";
 import EndNode from "@/components/nodes/EndNode";
-import NodeChooserPopup from "@/components/NodeChooserPopup";
+import NodeChooserPopup, { ChooserFamily } from "@/components/NodeChooserPopup";
 import SimpleMessage from "@/components/nodes/SimpleMessageNode";
 import QuestionNode from "@/components/nodes/QuestionNode";
 import StartNode from "@/components/nodes/StartNode";
 import Webhook from "@/components/nodes/Webhook";
 import Command from "@/components/nodes/Command";
+import NoteNode from "@/components/nodes/NoteNode";
+import Choice from "@/components/nodes/Choice";
 
 import { isValidConnection } from "./nodes/utils";
 import AutoEdge from "./nodes/AutoEdge";
@@ -40,7 +42,12 @@ const initialNodes: Node[] = [
   SimpleMessage.Builder({ x: 120, y: 160 }, "msg2"),
   QuestionNode.Builder({ x: -60, y: 160 }, "q"),
   EndNode.Builder({ x: 120, y: 240 }, "end1"),
-  EndNode.Builder({ x: -60, y: 320 }, "end2"),
+  EndNode.Builder({ x: -60, y: 420 }, "end2"),
+  Choice.Builder({ x: -60, y: 320 }, "choice", "What flavor?", [
+    "Chocolate",
+    "Vanilla",
+    "Strawberry",
+  ]),
 
   Webhook.Builder({ x: -180, y: 260 }, "wh"),
 ];
@@ -50,9 +57,13 @@ const initialEdges: Edge[] = [
   { id: "bye", source: "cmd", sourceHandle: "1", target: "msg2" },
   { id: "byeend", source: "msg2", target: "end1" },
 
-  { id: "start", source: "cmd", sourceHandle: "0", target: "q" },
+  { id: "startcmd", source: "cmd", sourceHandle: "0", target: "q" },
   { id: "q", source: "q", target: "msg1" },
-  { id: "startend", source: "msg1", target: "end2" },
+  { id: "startend", source: "msg1", target: "choice" },
+
+  { id: "choiceend1", source: "choice", sourceHandle: "0", target: "end2" },
+  { id: "choiceend2", source: "choice", sourceHandle: "1", target: "end2" },
+  { id: "choiceend3", source: "choice", sourceHandle: "2", target: "end2" },
   { id: "wh1", source: "q", target: "wh" },
 ];
 
@@ -65,9 +76,13 @@ const nodeTypes: { [k in string]: CustomNode<any> } = {
   [SimpleMessage.TypeKey]: SimpleMessage,
   [QuestionNode.TypeKey]: QuestionNode,
   [Command.TypeKey]: Command,
+  [Choice.TypeKey]: Choice,
 
   // Async actions
   [Webhook.TypeKey]: Webhook,
+
+  // Utils
+  [NoteNode.TypeKey]: NoteNode,
 };
 
 const edgeTypes: { [k in string]: any } = {
@@ -115,7 +130,7 @@ export default function Editor() {
     [flow, setNodes]
   );
 
-  const [family, setFamily] = useState<"state" | "action">("state");
+  const [family, setFamily] = useState<ChooserFamily>("state");
   const [showPicker, setShowPicker] = useState(false);
 
   return (

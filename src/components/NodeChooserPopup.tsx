@@ -7,9 +7,10 @@ import { CustomNode } from "@/types";
 const titles: { [k in ChooserFamily]: string } = {
   state: "Choose a state node",
   action: "Choose an async action",
+  util: "Choose an utility",
 };
 
-type ChooserFamily = "state" | "action";
+export type ChooserFamily = "state" | "action" | "util";
 type Props = {
   type: ChooserFamily;
   onHide: () => void;

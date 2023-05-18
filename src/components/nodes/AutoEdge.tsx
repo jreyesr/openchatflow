@@ -1,6 +1,7 @@
 import React from "react";
 import { BaseEdge, EdgeProps, getBezierPath, useReactFlow } from "reactflow";
 import Command from "./Command";
+import Choice from "./Choice";
 
 /**
  * A custom Reactflow edge that changes its appearance depending on
@@ -46,10 +47,13 @@ export default function AutoEdge({
   }
   // any other combination shouldn't be possible
 
-  // Label (command -> other state) transitions
   let label = "";
   if (sourceNode.type === Command.TypeKey && targetIsState) {
+    // Label (command -> other state) transitions
     label = `-> ${sourceNode.data.commands[sourceHandleId!]}`;
+  } else if (sourceNode.type === Choice.TypeKey && targetIsState) {
+    // Also label (choice -> other state) transitions
+    label = sourceNode.data.choices[sourceHandleId!];
   }
 
   return (

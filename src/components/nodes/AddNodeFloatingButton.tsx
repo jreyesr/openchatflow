@@ -1,7 +1,13 @@
 import { Panel } from "reactflow";
 
+import { ChooserFamily } from "../NodeChooserPopup";
+
+import ChatBubble from "@/icons/chat_bubble.svg";
+import Bolt from "@/icons/bolt.svg";
+import Tool from "@/icons/tool.svg";
+
 type Props = {
-  onAdd: (family: "state" | "action") => void;
+  onAdd: (family: ChooserFamily) => void;
 };
 
 export default function AddNodeFloatingButton(props: Props) {
@@ -32,28 +38,21 @@ export default function AddNodeFloatingButton(props: Props) {
         className="p-0 w-12 h-12 hidden group-hover:block rounded-full bg-gray-200 hover:bg-gray-300 active:shadow-lg shadow transition ease-in duration-200"
         onClick={() => props.onAdd("state")}
       >
-        {/* Material Design's Chat Bubble icon */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 96 960 960"
-          className="w-5 h-5 inline-block"
-        >
-          <path d="M80 976V236q0-23 18-41.5t42-18.5h680q23 0 41.5 18.5T880 236v520q0 23-18.5 41.5T820 816H240L80 976Zm60-145 75-75h605V236H140v595Zm0-595v595-595Z" />
-        </svg>
+        <ChatBubble className="w-5 h-5 inline-block" />
       </button>
 
       <button
         className="p-0 w-12 h-12 hidden group-hover:block rounded-full bg-gray-200 hover:bg-gray-300 active:shadow-lg shadow transition ease-in duration-200"
         onClick={() => props.onAdd("action")}
       >
-        {/* Material Design's Bolt icon */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 96 960 960"
-          className="w-5 h-5 inline-block"
-        >
-          <path d="m393 891 279-335H492l36-286-253 366h154l-36 255Zm-73 85 40-280H160l360-520h80l-40 320h240L400 976h-80Zm153-395Z" />
-        </svg>
+        <Bolt className="w-5 h-5 inline-block" />
+      </button>
+
+      <button
+        className="p-0 w-12 h-12 hidden group-hover:block rounded-full bg-gray-200 hover:bg-gray-300 active:shadow-lg shadow transition ease-in duration-200"
+        onClick={() => props.onAdd("util")}
+      >
+        <Tool className="w-5 h-5 inline-block" />
       </button>
     </Panel>
   );
