@@ -1,6 +1,4 @@
-"use client";
-
-import Editor from "./[id]/page";
+import Editor from "../../components/Editor";
 
 export default function Design() {
   return (
