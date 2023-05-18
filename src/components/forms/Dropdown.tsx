@@ -1,6 +1,6 @@
 export default function Dropdown(props: {
   label: string;
-  options: string[];
+  options: readonly string[];
   selected?: string;
   onChange: (newValue: string) => void;
 }) {

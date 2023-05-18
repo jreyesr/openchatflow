@@ -11,9 +11,11 @@ import TextField from "@/components/forms/TextField";
 import Dropdown from "@/components/forms/Dropdown";
 import MultiKeyValueField from "@/components/forms/MultiKeyValueField";
 
+const METHODS = ["GET", "POST"] as const;
+type Method = (typeof METHODS)[number];
 type CustomData = {
   url: string;
-  method: "GET" | "POST";
+  method: Method;
   headers: { k: string; v: string }[];
   body: { k: string; v: string }[];
 };
@@ -45,9 +47,9 @@ const Webhook: CustomNode<CustomData> = function (
         />
         <Dropdown
           label="Method"
-          options={["GET", "POST"]}
+          options={METHODS}
           selected={method}
-          onChange={setMethod}
+          onChange={(m) => setMethod(m as Method)}
         />
         <MultiKeyValueField
           label="Headers"
