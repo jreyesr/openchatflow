@@ -1,6 +1,7 @@
 import Topbar from "@/components/topbar";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,16 @@ export default function RootLayout({
         <Topbar />
 
         <div className="w-full pt-10 px-4 sm:px-6 md:px-8">{children}</div>
+
+        {process.env.NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN && (
+          <Script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={JSON.stringify({
+              token: process.env.NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN,
+            })}
+          />
+        )}
       </body>
     </html>
   );
