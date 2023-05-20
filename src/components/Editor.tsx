@@ -34,39 +34,6 @@ import Choice from "@/components/nodes/Choice";
 import { isValidConnection } from "./nodes/utils";
 import AutoEdge from "./nodes/AutoEdge";
 
-const initialNodes: Node[] = [
-  StartNode.Builder({ x: 0, y: 0 }),
-  Command.Builder({ x: 0, y: 80 }, "cmd", ["/start", "/bye"]),
-
-  SimpleMessage.Builder({ x: -60, y: 240 }, "msg1"),
-  SimpleMessage.Builder({ x: 120, y: 160 }, "msg2"),
-  QuestionNode.Builder({ x: -60, y: 160 }, "q"),
-  EndNode.Builder({ x: 120, y: 240 }, "end1"),
-  EndNode.Builder({ x: -60, y: 420 }, "end2"),
-  Choice.Builder({ x: -60, y: 320 }, "choice", "What flavor?", [
-    "Chocolate",
-    "Vanilla",
-    "Strawberry",
-  ]),
-
-  Webhook.Builder({ x: -180, y: 260 }, "wh"),
-];
-const initialEdges: Edge[] = [
-  { id: "start", source: "__start__", target: "cmd" },
-
-  { id: "bye", source: "cmd", sourceHandle: "1", target: "msg2" },
-  { id: "byeend", source: "msg2", target: "end1" },
-
-  { id: "startcmd", source: "cmd", sourceHandle: "0", target: "q" },
-  { id: "q", source: "q", target: "msg1" },
-  { id: "startend", source: "msg1", target: "choice" },
-
-  { id: "choiceend1", source: "choice", sourceHandle: "0", target: "end2" },
-  { id: "choiceend2", source: "choice", sourceHandle: "1", target: "end2" },
-  { id: "choiceend3", source: "choice", sourceHandle: "2", target: "end2" },
-  { id: "wh1", source: "q", target: "wh" },
-];
-
 const nodeTypes: { [k in string]: CustomNode<any> } = {
   // Control nodes
   [StartNode.TypeKey]: StartNode,
@@ -89,10 +56,13 @@ const edgeTypes: { [k in string]: any } = {
   default: AutoEdge,
 };
 
-export default function Editor() {
+export default function Editor(props: {
+  initialNodes: Node[];
+  initialEdges: Edge[];
+}) {
   const flowWrapper = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(props.initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(props.initialEdges);
   const [flow, setFlow] = useState<ReactFlowInstance | null>(null);
 
   const onConnect = useCallback(

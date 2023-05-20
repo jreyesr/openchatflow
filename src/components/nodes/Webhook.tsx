@@ -1,3 +1,5 @@
+"use client";
+
 import { Handle, NodeProps, Position, XYPosition } from "reactflow";
 import { v4 as uuidv4 } from "uuid";
 
