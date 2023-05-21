@@ -1,31 +1,61 @@
-import { Node, Edge } from "reactflow";
+import { DateTime } from "luxon";
+import Link from "next/link";
 
-import Editor from "@/components/Editor";
+import { prisma } from "@/lib/prisma";
+import Pencil from "@/icons/pencil.svg";
+import Add from "@/icons/add.svg";
 
-const initialNodes: Node[] = [
-  {
-    id: "__start__",
-    position: { x: 0, y: 0 },
-    data: {},
-    deletable: false,
-    type: "stateStart",
-  },
-  {
-    id: "__end__",
-    position: { x: 0, y: 80 },
-    data: { exitCode: "success" },
-    type: "stateEnd",
-  },
-];
+export default async function DesignList() {
+  const flows = await prisma.conversationTemplate.findMany({
+    orderBy: { createdAt: "desc" },
+  }); // List all flows for now
 
-const initialEdges: Edge[] = [
-  { id: "demo", source: "__start__", target: "__end__" },
-];
-
-export default function Design() {
   return (
-    <div className="flex" style={{ height: "75vh" }}>
-      <Editor initialNodes={initialNodes} initialEdges={initialEdges} />
-    </div>
+    <>
+      <div className="overflow-hidden border rounded-xl shadow-sm">
+        <table className="w-full border-collapse text-left ">
+          <thead className="text-gray-700 uppercase bg-gray-50">
+            <tr className="divide-x">
+              <th className="px-4 py-4">Name</th>
+              <th className="px-4 py-4">Description</th>
+              <th className="px-4 py-4">Created at</th>
+              <th className="w-8"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y border-t">
+            {flows.map((f) => (
+              <tr key={f.id} className="hover:bg-gray-50">
+                <td className="px-4 py-3">{f.title}</td>
+                <td className="px-4 py-3">{f.description}</td>
+                <td className="px-4 py-3">
+                  <span title={f.createdAt.toISOString()}>
+                    {DateTime.fromJSDate(f.createdAt).toLocaleString()}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex justify-end gap-4">
+                    <Link
+                      href={`/design/${f.id}`}
+                      className="rounded-full hover:bg-gray-200 p-2"
+                      title="Edit"
+                    >
+                      <Pencil className="w-6 h-6" />{" "}
+                    </Link>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <Link
+        href="/design/new"
+        className="rounded-xl bg-orange-600 mx-auto max-w-[15rem] my-4 p-3 text-center flex items-center justify-center font-bold gap-3"
+      >
+        <Add className="w-8 h-8" />
+        New conversation
+      </Link>
+    </>
   );
 }

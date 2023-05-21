@@ -149,11 +149,20 @@ export default function Editor(props: {
         )}
         <Background variant={BackgroundVariant.Cross} gap={20} size={4} />
       </ReactFlow>
-      {nodes.map((n) => (
-        <code key={n.id} className="block">
-          {JSON.stringify(n)}
-        </code>
-      ))}
+
+      {/* Expandable container for flow JSON declaration */}
+      <div className="mx-auto py-4">
+        <details className="bg-white open:ring-1 open:ring-black/5 open:shadow-lg p-6 rounded-lg">
+          <summary className="text-sm leading-6 text-slate-900 dark:text-white font-semibold select-none">
+            Debug
+          </summary>
+          <div className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-400 select-all">
+            <pre className="block">
+              {JSON.stringify({ nodes, edges }, null, 2)}
+            </pre>
+          </div>
+        </details>
+      </div>
     </div>
   );
 }
