@@ -19,3 +19,16 @@ export async function createConversationTemplate(data: FormData) {
 
   redirect(`/design/${newObj.id}`);
 }
+
+export async function updateConversationTemplate(
+  id: number,
+  data: { nodes: any[]; edges: any[] }
+) {
+  await prisma.conversationTemplate.update({
+    where: { id },
+    data: {
+      flow: data,
+    },
+    select: { id: true },
+  });
+}

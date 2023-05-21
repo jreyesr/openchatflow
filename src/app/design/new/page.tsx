@@ -6,6 +6,7 @@ import Add from "@/icons/add.svg";
 export default function NewConversationTemplate() {
   return (
     <form
+      // @ts-ignore
       action={createConversationTemplate}
       className="grid grid-cols-1 gap-6 bg-white p-4 lg:max-w-3xl mx-auto"
     >

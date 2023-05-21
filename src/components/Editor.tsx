@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
   Node,
   Background,
@@ -32,6 +32,7 @@ import NoteNode from "@/components/nodes/NoteNode";
 import Choice from "@/components/nodes/Choice";
 
 import { isValidConnection } from "./nodes/utils";
+import useDebounce from "@/hooks/useDebounce";
 import AutoEdge from "./nodes/AutoEdge";
 
 const nodeTypes: { [k in string]: CustomNode<any> } = {
@@ -56,14 +57,25 @@ const edgeTypes: { [k in string]: any } = {
   default: AutoEdge,
 };
 
+/** How much inactivity time is required before auto-save kicks in? */
+const SAVE_INTERVAL_MS = 2000;
+
 export default function Editor(props: {
   initialNodes: Node[];
   initialEdges: Edge[];
+  save: (data: any) => void;
 }) {
   const flowWrapper = useRef<HTMLDivElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(props.initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(props.initialEdges);
   const [flow, setFlow] = useState<ReactFlowInstance | null>(null);
+
+  // Debounce rapidly-changing flow data, then call an effect once it stabilizes (i.e., no changes in the past X millis)
+  const debouncedNodes = useDebounce(nodes, SAVE_INTERVAL_MS);
+  const debouncedEdges = useDebounce(edges, SAVE_INTERVAL_MS);
+  useEffect(() => {
+    props.save({ nodes: debouncedNodes, edges: debouncedEdges });
+  }, [debouncedNodes, debouncedEdges]);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
