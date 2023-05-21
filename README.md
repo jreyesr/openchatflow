@@ -2,6 +2,8 @@
 
 An application to visually design, test, run and monitor Telegram chatbots.
 
+Explore the demo here:
+
 [![vercel badge](https://img.shields.io/badge/vercel-prod-brightgreen)](https://openchatflow.vercel.app/)
 
 ## Features
