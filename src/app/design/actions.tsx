@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function createConversationTemplate(data: FormData) {
   const title = data.get("name") as string;
@@ -17,6 +18,7 @@ export async function createConversationTemplate(data: FormData) {
     select: { id: true },
   });
 
+  revalidatePath("/design");
   redirect(`/design/${newObj.id}`);
 }
 
