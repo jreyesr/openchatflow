@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import Pencil from "@/icons/pencil.svg";
 import Add from "@/icons/add.svg";
 
+export const dynamic = "force-dynamic";
 export default async function DesignList() {
   const flows = await prisma.conversationTemplate.findMany({
     orderBy: { createdAt: "desc" },
