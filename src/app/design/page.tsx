@@ -53,6 +53,7 @@ export default async function DesignList() {
       <Link
         href="/design/new"
         className="rounded-xl bg-orange-600 mx-auto max-w-[15rem] my-4 p-3 text-center flex items-center justify-center font-bold gap-3"
+        prefetch={false}
       >
         <Add className="w-8 h-8" />
         New conversation
