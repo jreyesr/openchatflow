@@ -38,6 +38,7 @@ export default async function DesignList() {
                       href={`/design/${f.id}`}
                       className="rounded-full hover:bg-gray-200 p-2"
                       title="Edit"
+                      prefetch={false} // Don't prefetch on page load, it puts extra load on the DB
                     >
                       <Pencil className="w-6 h-6" />{" "}
                     </Link>
