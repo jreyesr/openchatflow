@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
   Node,
   Background,
@@ -32,40 +32,8 @@ import NoteNode from "@/components/nodes/NoteNode";
 import Choice from "@/components/nodes/Choice";
 
 import { isValidConnection } from "./nodes/utils";
+import useDebounce from "@/hooks/useDebounce";
 import AutoEdge from "./nodes/AutoEdge";
-
-const initialNodes: Node[] = [
-  StartNode.Builder({ x: 0, y: 0 }),
-  Command.Builder({ x: 0, y: 80 }, "cmd", ["/start", "/bye"]),
-
-  SimpleMessage.Builder({ x: -60, y: 240 }, "msg1"),
-  SimpleMessage.Builder({ x: 120, y: 160 }, "msg2"),
-  QuestionNode.Builder({ x: -60, y: 160 }, "q"),
-  EndNode.Builder({ x: 120, y: 240 }, "end1"),
-  EndNode.Builder({ x: -60, y: 420 }, "end2"),
-  Choice.Builder({ x: -60, y: 320 }, "choice", "What flavor?", [
-    "Chocolate",
-    "Vanilla",
-    "Strawberry",
-  ]),
-
-  Webhook.Builder({ x: -180, y: 260 }, "wh"),
-];
-const initialEdges: Edge[] = [
-  { id: "start", source: "__start__", target: "cmd" },
-
-  { id: "bye", source: "cmd", sourceHandle: "1", target: "msg2" },
-  { id: "byeend", source: "msg2", target: "end1" },
-
-  { id: "startcmd", source: "cmd", sourceHandle: "0", target: "q" },
-  { id: "q", source: "q", target: "msg1" },
-  { id: "startend", source: "msg1", target: "choice" },
-
-  { id: "choiceend1", source: "choice", sourceHandle: "0", target: "end2" },
-  { id: "choiceend2", source: "choice", sourceHandle: "1", target: "end2" },
-  { id: "choiceend3", source: "choice", sourceHandle: "2", target: "end2" },
-  { id: "wh1", source: "q", target: "wh" },
-];
 
 const nodeTypes: { [k in string]: CustomNode<any> } = {
   // Control nodes
@@ -89,11 +57,25 @@ const edgeTypes: { [k in string]: any } = {
   default: AutoEdge,
 };
 
-export default function Editor() {
+/** How much inactivity time is required before auto-save kicks in? */
+const SAVE_INTERVAL_MS = 2000;
+
+export default function Editor(props: {
+  initialNodes: Node[];
+  initialEdges: Edge[];
+  save: (data: any) => void;
+}) {
   const flowWrapper = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(props.initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(props.initialEdges);
   const [flow, setFlow] = useState<ReactFlowInstance | null>(null);
+
+  // Debounce rapidly-changing flow data, then call an effect once it stabilizes (i.e., no changes in the past X millis)
+  const debouncedNodes = useDebounce(nodes, SAVE_INTERVAL_MS);
+  const debouncedEdges = useDebounce(edges, SAVE_INTERVAL_MS);
+  useEffect(() => {
+    props.save({ nodes: debouncedNodes, edges: debouncedEdges });
+  }, [debouncedNodes, debouncedEdges]);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -179,11 +161,20 @@ export default function Editor() {
         )}
         <Background variant={BackgroundVariant.Cross} gap={20} size={4} />
       </ReactFlow>
-      {nodes.map((n) => (
-        <code key={n.id} className="block">
-          {JSON.stringify(n)}
-        </code>
-      ))}
+
+      {/* Expandable container for flow JSON declaration */}
+      <div className="mx-auto py-4">
+        <details className="bg-white open:ring-1 open:ring-black/5 open:shadow-lg p-6 rounded-lg">
+          <summary className="text-sm leading-6 text-slate-900 dark:text-white font-semibold select-none">
+            Debug
+          </summary>
+          <div className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-400 select-all">
+            <pre className="block">
+              {JSON.stringify({ nodes, edges }, null, 2)}
+            </pre>
+          </div>
+        </details>
+      </div>
     </div>
   );
 }

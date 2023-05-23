@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Connection,
   Handle,
