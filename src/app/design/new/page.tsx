@@ -11,7 +11,9 @@ export default function NewConversationTemplate() {
       className="grid grid-cols-1 gap-6 bg-white p-4 lg:max-w-3xl mx-auto"
     >
       <label className="block">
-        <span className="text-gray-700">Name</span>
+        <span className="text-gray-700 after:content-['*'] after:ml-0.5 after:text-red-500">
+          Name
+        </span>
         <input
           type="text"
           name="name"
@@ -22,7 +24,9 @@ export default function NewConversationTemplate() {
       </label>
 
       <label className="block">
-        <span className="text-gray-700">Description</span>
+        <span className="text-gray-700 after:content-['*'] after:ml-0.5 after:text-red-500">
+          Description
+        </span>
         <input
           type="text"
           name="description"
