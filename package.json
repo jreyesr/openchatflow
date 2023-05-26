@@ -9,7 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.4.1",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.39.1",
+    "@opentelemetry/resources": "^1.13.0",
+    "@opentelemetry/sdk-node": "^0.39.1",
+    "@opentelemetry/sdk-trace-base": "^1.13.0",
+    "@opentelemetry/semantic-conventions": "^1.13.0",
     "@prisma/client": "^4.14.1",
+    "@prisma/instrumentation": "^4.14.1",
     "@tailwindcss/forms": "^0.5.3",
     "@types/node": "18.16.3",
     "@types/react": "18.2.0",
