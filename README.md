@@ -8,7 +8,7 @@ Explore the demo here:
 
 ## Features
 
-- Visual desiger for Telegram conversations, inspired by [UML 2.x Activity Diagrams](https://en.wikipedia.org/wiki/Activity_diagram)
+- Visual designer for Telegram conversations, inspired by [UML 2.x Activity Diagrams](https://en.wikipedia.org/wiki/Activity_diagram)
   ![a screenshot of the editor](./images/eff5909a5847caa0976bfe0644bdfe53.png)
 
 - Nodes that drive the conversation forward:
