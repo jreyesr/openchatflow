@@ -22,6 +22,7 @@ export default async function Design({ params }: Props) {
   return (
     <div className="flex" style={{ height: "75vh" }}>
       <Editor
+        flowId={id.toString()}
         initialNodes={(flow as any).nodes}
         initialEdges={(flow as any).edges}
         save={onSave}
