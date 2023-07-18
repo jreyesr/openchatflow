@@ -29,4 +29,12 @@ const isValidConnection = (flow: ReactFlowInstance, connection: Connection) => {
   return false;
 };
 
-export { isValidConnection };
+// See https://stackoverflow.com/a/34890276
+const groupBy = function (xs: Array<any>, key: string): any {
+  return xs.reduce(function (rv, x) {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+};
+
+export { isValidConnection, groupBy };

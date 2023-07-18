@@ -35,6 +35,8 @@ import { isValidConnection } from "./nodes/utils";
 import useDebounce from "@/hooks/useDebounce";
 import AutoEdge from "./nodes/AutoEdge";
 
+import { convert } from "@/components/nodes/converter";
+
 const nodeTypes: { [k in string]: CustomNode<any> } = {
   // Control nodes
   [StartNode.TypeKey]: StartNode,
@@ -61,6 +63,7 @@ const edgeTypes: { [k in string]: any } = {
 const SAVE_INTERVAL_MS = 2000;
 
 export default function Editor(props: {
+  flowId: string;
   initialNodes: Node[];
   initialEdges: Edge[];
   save: (data: any) => void;
@@ -163,6 +166,22 @@ export default function Editor(props: {
       </ReactFlow>
 
       {/* Expandable container for flow JSON declaration */}
+      <div className="mx-auto py-4">
+        <details className="bg-white open:ring-1 open:ring-black/5 open:shadow-lg p-6 rounded-lg">
+          <summary className="text-sm leading-6 text-slate-900 dark:text-white font-semibold select-none">
+            Debug
+          </summary>
+          <div className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-400 select-all">
+            <pre className="block">
+              {JSON.stringify(
+                nodes.length > 0 ? convert(props.flowId, nodes, edges) : {},
+                null,
+                2
+              )}
+            </pre>
+          </div>
+        </details>
+      </div>
       <div className="mx-auto py-4">
         <details className="bg-white open:ring-1 open:ring-black/5 open:shadow-lg p-6 rounded-lg">
           <summary className="text-sm leading-6 text-slate-900 dark:text-white font-semibold select-none">

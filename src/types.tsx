@@ -8,3 +8,36 @@ export interface CustomNode<T> {
   FriendlyName: string;
   Icon: FunctionComponent<any>;
 }
+
+export interface ConversationContext {
+  status: "running" | "success" | "error";
+  context: any;
+}
+
+export type Message = {
+  messageId: number;
+  from: {
+    id: number;
+    isBot: boolean;
+    firstName: string;
+    lastName?: string;
+    username?: string;
+    language?: string;
+  };
+  dateEpoch: number;
+  chat: {
+    id: number;
+    type: "private" | "group" | "supergroup";
+    title?: string;
+    username?: string;
+  };
+};
+
+export type TextMessage = Message & { text: string };
+
+export type ConversationEvent = { type: "MESSAGE_IN"; message: TextMessage };
+
+export type ConversationState = {
+  value: string;
+  context: ConversationContext;
+};
