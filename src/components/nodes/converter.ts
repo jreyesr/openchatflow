@@ -63,7 +63,7 @@ function nodeById(nodes: Node[], id: string): Node {
  * @returns `undefined` if the node is not an async action, or the {@link ActionFunction} that the node embodies,
  *  such as calling an external API
  */
-function nodeToAction(node: CustomNode<any>): ActionFunction | undefined {
+function nodeToAction(node: Node<any>): ActionFunction | undefined {
   // ONLY Action nodes are converted here
   if (!node.type!.startsWith("action")) return undefined;
 
@@ -99,7 +99,7 @@ function nodeToAction(node: CustomNode<any>): ActionFunction | undefined {
  * that the node embodies
  */
 function nodeToState(
-  node: CustomNode<any>,
+  node: Node<any>,
   outgoingEdgesState: Edge[],
   outgoingEdgesActions: Edge[]
 ): any | undefined {
@@ -195,7 +195,7 @@ export function convert(
   edges: Edge[]
 ): StateMachine<ConversationContext, ConversationState, ConversationEvent> {
   const stateObject: { [k in string]: any } = {};
-  for (const n of nodes as CustomNode<any>[]) {
+  for (const n of nodes as Node<any>[]) {
     const outgoingEdges = edges.filter((e) => e.source === n.id);
     // outgoingStates are edges that go out from the current node to state nodes
     const outgoingStates = outgoingEdges.filter((e) =>
@@ -227,7 +227,7 @@ export function convert(
       console.log(event, action);
     },
   };
-  for (const n of nodes as CustomNode<any>[]) {
+  for (const n of nodes as Node<any>[]) {
     const asAction = nodeToAction(n);
     if (asAction === undefined) continue; // Pass over nodes that don't convert to actions, such as state nodes
     actions[n.id] = asAction; // Stick this action in the actions object, keyed by the node's ID
