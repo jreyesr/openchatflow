@@ -5,7 +5,7 @@ import type {
   ConversationState,
 } from "@/types";
 import { Node, Edge } from "reactflow";
-import { createMachine, type StateMachine } from "xstate";
+import { createMachine, MachineConfig, type StateMachine } from "xstate";
 import { groupBy } from "./utils";
 
 /**
@@ -108,7 +108,7 @@ function nodeToState(
 
   // This is configuration common to all nodes. All branches of the `switch` below
   // add data to this object, and it is returned at the end
-  let config: any = { meta: { nodeType: node.type } };
+  let config: any = { meta: { nodeType: node.type, nodeConfig: node } };
 
   let _actionsGroupedByHandle = groupBy(outgoingEdgesActions, "sourceHandle");
   // actionsGroupedByHandle is a dict. Keys are handle IDs, values are lists of target node IDs
@@ -123,11 +123,13 @@ function nodeToState(
   );
   // allActions is a list of target node IDs, no matter the output handle
   // You can also think of it as all the VALUES of actionsGroupedByHandle, merged together in a single list
-  let allActions = outgoingEdgesActions.map((e) => e.id);
+  let allActions = outgoingEdgesActions.map((e) => e.target);
 
   switch (node.type) {
     case "stateStart":
-      config.always = outgoingEdgesState[0].target; // the start node should have exactly one outgoing node
+      if (outgoingEdgesState.length == 1) {
+        config.always = outgoingEdgesState[0].target; // the start node should have exactly one outgoing node
+      }
       break;
     case "stateEnd":
       config.type = "final"; // mark end nodes as final for XState
@@ -135,13 +137,13 @@ function nodeToState(
     case "stateSimpleMsg":
       // Send the configured message on state entry
       config.entry = [{ type: "sendMessage", content: node.data.msg }];
-      if (outgoingEdgesState.length > 0)
+      if (outgoingEdgesState.length == 1) {
         config.always = {
           // message nodes exit immediately, they don't wait for user input
           target: outgoingEdgesState[0].target, // message nodes should have exactly one outgoing node
           actions: allActions,
         };
-
+      }
       break;
     case "stateCommand":
       const commandConditions = outgoingEdgesState.map((e) => ({
@@ -156,13 +158,15 @@ function nodeToState(
 
       break;
     case "statePrompt":
-      config.on = {
-        messageIn: {
-          // unlike the Choice node just below, this one needs no conditions since prompts accept anything back from the user
-          target: outgoingEdgesState[0].target, // prompt nodes should have exactly one outgoing node
-          actions: allActions,
-        },
-      };
+      if (outgoingEdgesState.length == 1) {
+        config.on = {
+          messageIn: {
+            // unlike the Choice node just below, this one needs no conditions since prompts accept anything back from the user
+            target: outgoingEdgesState[0].target, // prompt nodes should have exactly one outgoing node
+            actions: allActions,
+          },
+        };
+      }
       // Send the configured prompt on state entry
       config.entry = [{ type: "sendMessage", content: node.data.prompt }];
 
@@ -186,14 +190,29 @@ function nodeToState(
       return undefined;
   }
 
+  // Now tag nodes that we need to stop on (for free-running until we have to block)
+  if (config.always && config.on === undefined) {
+    config.tags = ["transient"];
+  } else if (config.on !== undefined) {
+    config.tags = ["pause"];
+  }
+
+  // If node has no outgoing transitions, mark it as final
+  // TODO: This does not cover command & prompt nodes that have no outgoing handles, since
+  // they'd have {on: {messageIn: []}}, which isn't undefined
+  // Consider handling those too
+  if (config.always === undefined && config.on === undefined) {
+    config.final = true;
+  }
+
   return config;
 }
 
-export function convert(
+export function convertToConfig(
   machineId: string,
   nodes: Node[],
   edges: Edge[]
-): StateMachine<ConversationContext, ConversationState, ConversationEvent> {
+): MachineConfig<ConversationContext, any, ConversationEvent, any, any, any> {
   const stateObject: { [k in string]: any } = {};
   for (const n of nodes as Node<any>[]) {
     const outgoingEdges = edges.filter((e) => e.source === n.id);
@@ -210,12 +229,25 @@ export function convert(
     stateObject[n.id] = state; // Stick this node in the nodes object, keyed by the node's ID
   }
 
-  console.log({
+  const config = {
     id: machineId,
     initial: findFirstNode(nodes).id,
     states: stateObject,
-    predictableActionArguments: true,
-  });
+    predictableActionArguments: true, // This is recommended for v4-v5 consistency: https://xstate.js.org/docs/guides/actions.html#api
+  };
+
+  console.debug(config);
+
+  return config;
+}
+
+export function convert(
+  machineId: string,
+  nodes: Node[],
+  edges: Edge[]
+): StateMachine<ConversationContext, ConversationState, ConversationEvent> {
+  // Create the config (states, events, guarded transitions, action invocations)
+  const config = convertToConfig(machineId, nodes, edges);
 
   // Now create the actions:
   // * sendMessage(content) is used from some nodes
@@ -246,18 +278,10 @@ export function convert(
     ConversationContext,
     ConversationEvent,
     ConversationState
-  >(
-    {
-      id: machineId,
-      initial: findFirstNode(nodes).id,
-      states: stateObject,
-      predictableActionArguments: true, // This is recommended for v4-v5 consistency: https://xstate.js.org/docs/guides/actions.html#api
-    },
-    {
-      actions,
-      guards,
-    }
-  );
+  >(config, {
+    actions,
+    guards,
+  });
 
   return userMachine;
 }
