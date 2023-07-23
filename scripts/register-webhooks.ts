@@ -49,7 +49,12 @@ async function registerWithTelegram(
 ): Promise<SetTokenResponse> {
   let body: any = { url: destinationURL };
   if (verificationToken) {
+    logger("Using secret Telegram<->API token for verification");
     body.secret_token = verificationToken;
+  } else {
+    logger(
+      "No token provided to verify that updates come from Telegram. Set the envvar WEBHOOK_VERIFICATION_TOKEN if that is required"
+    );
   }
 
   const resp = await axios.post(
