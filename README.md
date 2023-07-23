@@ -31,6 +31,28 @@ Explore the demo here:
 
 ## Development
 
+Install dependencies with `yarn install`.
+
+(Optional) Generate a key to encrypt the bot tokens in the DB:
+
+```bash
+yarn cloak generate
+```
+
+Copy the `CLOAK_MASTER_KEY` that is generated, the `CLOAK_KEYCHAIN` doesn't appear to be important.
+
+(End of Optional)
+
+Create a `.env` file based on these contents:
+
+```bash
+DATABASE_URL="postgresql://postgres:your-key@localhost:5432?pgbouncer=true"
+DIRECT_URL="postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:5432"
+
+# Copy the CLOAK_MASTER_KEY here, or use this one for a faster start
+PRISMA_FIELD_ENCRYPTION_KEY="k1.aesgcm256.DbQoar8ZLuUsOHZNyrnjlskInHDYlzF3q6y1KGM7DUM="
+```
+
 Run the development server:
 
 ```bash

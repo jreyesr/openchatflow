@@ -18,3 +18,13 @@ model ConversationTemplate {
   flow          Json // Must contain "nodes" and "edges" properties
   machineConfig Json     @default("{}")
 }
+
+model TelegramBot {
+  id       Int    @id @default(autoincrement())
+  name     String
+  username String
+
+  // This is sensitive stuff, encrypted via https://www.npmjs.com/package/prisma-field-encryption
+  // Triple-slash required (AST comment): https://www.prisma.io/docs/concepts/components/prisma-schema#comments
+  token String /// @encrypted
+}

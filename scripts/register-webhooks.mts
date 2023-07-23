@@ -1,7 +1,8 @@
 import { env } from "process";
 
-import { PrismaClient } from "@prisma/client";
+import { default as prismaClient } from "../src/lib/prisma";
 import assert from "assert/strict";
+import { PrismaClient } from "@prisma/client";
 
 type VercelEnv = "development" | "preview" | "production";
 
@@ -16,11 +17,16 @@ const environ: VercelEnv = (env.VERCEL_ENV as VercelEnv) ?? "development";
 //   ["preview", "production"].includes(environ),
 //   `Trying to run on environment ${environ}, only supported on test and prod`
 // );
-
-const prisma = new PrismaClient();
+const prisma: PrismaClient = prismaClient.makeClient();
 
 async function main() {
-  console.log(await prisma.conversationTemplate.findMany({}));
+  const bots = await prisma.telegramBot.findMany({});
+
+  for (const bot of bots) {
+    console.log(bot.id, bot.name, bot.username, bot.token);
+  }
+
+  console.log("Done registering webhooks! Bye...");
 }
 
 main()
@@ -32,5 +38,3 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
-
-console.log("Done registering webhooks! Bye...");

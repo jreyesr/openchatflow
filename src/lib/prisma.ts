@@ -5,15 +5,22 @@
 // as each PrismaClient instance holds its own connection pool.""
 
 import { PrismaClient } from "@prisma/client";
+import { fieldEncryptionMiddleware } from "prisma-field-encryption";
 
 const globalForPrisma = global as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+export function makeClient(): PrismaClient {
+  const client = new PrismaClient({
     log: ["query"],
   });
+
+  client.$use(fieldEncryptionMiddleware());
+
+  return client;
+}
+
+export const prisma = globalForPrisma.prisma ?? makeClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
