@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "reg-webhooks": "tsx scripts/register-webhooks.mts"
+    "reg-webhooks": "DEBUG=register-webhooks tsx scripts/register-webhooks.ts"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.4.1",
@@ -25,6 +25,8 @@
     "@types/uuid": "^9.0.1",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
+    "debug": "^4.3.4",
+    "dotenv": "^16.3.1",
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.4",
     "luxon": "^3.3.0",
