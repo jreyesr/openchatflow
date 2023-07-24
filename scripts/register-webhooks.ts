@@ -139,7 +139,11 @@ async function main() {
   for (const bot of bots) {
     logger(`Registering bot ${bot.id} on URL ${webhookURL}`);
     tgRegistrationPromises.push(
-      registerWithTelegram(bot.token, webhookURL, webhookVerificationToken)
+      registerWithTelegram(
+        bot.token,
+        `${webhookURL}?botId=${bot.id}`,
+        webhookVerificationToken
+      )
     );
   }
   const responses = await Promise.all(tgRegistrationPromises);
