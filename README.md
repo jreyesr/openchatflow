@@ -31,13 +31,94 @@ Explore the demo here:
 
 ## Development
 
+Install dependencies with `yarn install`.
+
+(Optional) Generate a key to encrypt the bot tokens in the DB:
+
+```bash
+yarn cloak generate
+```
+
+Copy the `CLOAK_MASTER_KEY` that is generated, the `CLOAK_KEYCHAIN` doesn't appear to be important.
+
+(End of Optional)
+
+Create a `.env` file based on these contents:
+
+```bash
+DATABASE_URL="postgresql://postgres:your-key@localhost:5432?pgbouncer=true"
+DIRECT_URL="postgresql://postgres:your-super-secret-and-long-postgres-password@localhost:5432"
+
+# Copy the CLOAK_MASTER_KEY here, or use this one for a faster start
+PRISMA_FIELD_ENCRYPTION_KEY="k1.aesgcm256.DbQoar8ZLuUsOHZNyrnjlskInHDYlzF3q6y1KGM7DUM="
+```
+
 Run the development server:
 
 ```bash
 yarn dev
 ```
 
-Then, open [http://localhost:3000](http://localhost:3000) in your browser.
+Then, open <http://localhost:3000> in your browser.
+
+### Locally developing Telegram webhooks
+
+If you need to test with real Telegram bots, I recommend using [Localtunnel](https://theboroer.github.io/localtunnel-www/) instead of [Ngrok](https://ngrok.com/). This is because Ngrok assigns you random subdomains on the free plan. Localtunnel, on the other hand, lets you request a subdomain.
+
+Follow the instructions to install the CLI (it's a Node package). Then, run `lt --subdomain openchatflow --port 3000 --print-requests` to start the tunnel on <https://openchatflow.loca.lt>. Note that if someone else is using that same domain, you won't be able to use it, and Localtunnel will assign you a random subdomain anyways. In that case, change the subdomain and try again, since you need a stable subdomain for registering with Telegram.
+
+Otherwise, you can test locally (without involving the actual Telegram servers), using [these examples](https://core.telegram.org/bots/webhooks#testing-your-bot-with-updates) to send
+HTTP requests that look similar to those sent by Telegram itself. If developing locally, omit the `--tlsv1.2` flag, since it only works for HTTPS, and also change the `https://openchatflow.loca.lt` base URL for `http://localhost:3000`.
+
+```bash
+curl --tlsv1.2 -k -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache"  -d '{
+"update_id":10000,
+"message":{
+  "date":1441645532,
+  "chat":{
+     "last_name":"Test Lastname",
+     "id":1111111,
+     "first_name":"Test",
+     "username":"Test"
+  },
+  "message_id":1365,
+  "from":{
+     "last_name":"Test Lastname",
+     "id":1111111,
+     "first_name":"Test",
+     "username":"Test"
+  },
+  "text":"/start"
+}
+}' https://openchatflow.loca.lt/api/webhook/telegram
+```
+
+For example:
+
+- Sending a text message
+
+```bash
+curl -k -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache"  -d '{
+"update_id":10000,
+"message":{
+  "date":1441645532,
+  "chat":{
+     "last_name":"Test Lastname",
+     "id":1111111,
+     "first_name":"Test",
+     "username":"Test"
+  },
+  "message_id":1365,
+  "from":{
+     "last_name":"Test Lastname",
+     "id":1111111,
+     "first_name":"Test",
+     "username":"Test"
+  },
+  "text":"/start"
+}
+}' http://localhost:3000/api/webhook/telegram
+```
 
 ## Contributing
 

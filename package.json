@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "reg-webhooks": "DEBUG=register-webhooks tsx scripts/register-webhooks.ts"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.4.1",
@@ -23,16 +24,21 @@
     "@types/react-dom": "18.2.1",
     "@types/uuid": "^9.0.1",
     "autoprefixer": "10.4.14",
+    "axios": "^1.4.0",
+    "debug": "^4.3.4",
+    "dotenv": "^16.3.1",
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.4",
     "luxon": "^3.3.0",
     "next": "13.4.1",
     "postcss": "8.4.23",
+    "prisma-field-encryption": "^1.4.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "reactflow": "^11.7.0",
     "server-only": "^0.0.1",
     "tailwindcss": "3.3.2",
+    "tsx": "^3.12.7",
     "typescript": "5.0.4",
     "uuid": "^9.0.0",
     "xstate": "^4.37.2"
